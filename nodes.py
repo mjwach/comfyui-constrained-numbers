@@ -248,6 +248,34 @@ class ConstrainedPositiveInt16nNode:
         
         return (constrained_value,)
 
+class ConstrainedNonnegativeInt32nNode:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "value": ("INT", {
+                    "default": 0, 
+                    "min": 0, 
+                    "max": 9000000000000000,
+                    "step": 32, 
+                    "display": "number"
+                }),
+            }
+        }
+
+    RETURN_TYPES = ("INT",)
+    RETURN_NAMES = ("INT",)
+    FUNCTION = "clamp"
+    CATEGORY = "constrained_numbers"
+
+    def clamp(self, value):
+        if value < 0:
+            value = 0
+            
+        constrained_value = (value // 32) * 32
+        
+        return (constrained_value,)
+
 class ConstrainedPositiveInt32nNode:
     @classmethod
     def INPUT_TYPES(cls):
@@ -349,6 +377,32 @@ class ConstrainedPositiveInt4npxNode:
         return (constrained_value,)
 '''
 
+class ConstrainedFloat0to1Node:
+    @classmethod
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "value": ("FLOAT", {
+                    "default": 1.0,
+                    "min": 0.0,
+                    "max": 1.0,
+                    "step": 0.05,
+                    "round": False,
+                    "display": "number"
+                }),
+            }
+        }
+ 
+    RETURN_TYPES = ("FLOAT",)
+    RETURN_NAMES = ("FLOAT",)
+    FUNCTION = "clamp"
+    CATEGORY = "constrained_numbers"
+ 
+    def clamp(self, value):
+        constrained_value = max(0.0, min(1.0, float(value)))
+ 
+        return (constrained_value,)
+
 NODE_CLASS_MAPPINGS = {
     "Constrained Int (n>=0)": ConstrainedNonnegativeIntNode,
     "Constrained Int (n>0)": ConstrainedPositiveIntNode,
@@ -360,7 +414,9 @@ NODE_CLASS_MAPPINGS = {
     "Constrained Int (8n+1>0)": ConstrainedPositiveInt8np1Node,
     "Constrained Int (16n>=0)": ConstrainedNonnegativeInt16nNode,
     "Constrained Int (16n>0)": ConstrainedPositiveInt16nNode,
+    "Constrained Int (32n>=0)": ConstrainedNonnegativeInt32nNode,
     "Constrained Int (32n>0)": ConstrainedPositiveInt32nNode,
+    "Constrained Float (0.0 to 1.0)": ConstrainedFloat0to1Node
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -374,5 +430,7 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "Constrained Int (8n+1>0)": "Int (8n+1>0)",
     "Constrained Int (16n>=0)": "Int (16n>=0)",
     "Constrained Int (16n>0)": "Int (16n>0)",
-    "Constrained Int (32n>0)": "Int (32n>0)"
+    "Constrained Int (32n>=0)": "Int (32n>=0)",
+    "Constrained Int (32n>0)": "Int (32n>0)",
+    "Constrained Float (0.0 to 1.0)": "Float ∈ [0.0, 1.0]"
 }
